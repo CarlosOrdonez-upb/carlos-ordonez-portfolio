@@ -1,62 +1,98 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Portafolio Carlos Ordóñez", page_icon="⚙️")
-
-st.title("⚙️ Portafolio de Sistemas Embebidos")
-st.write("¡Hola! Esta es mi aplicación web de Streamlit corriendo desde mi PC.")
-st.success("Si ves esto, ¡la configuración local fue un éxito! 🚀")
 
 st.markdown(
 	"""
 	<style>
-	.stApp { background: #101820; color: #e8eef2; }
-	[data-testid="stSidebar"] { background: #17232b; }
+	.stApp {
+		background: #0d1117;
+		color: #e6edf3;
+		font-family: 'Segoe UI', sans-serif;
+	}
+	[data-testid="stSidebar"] { background: #161b22; }
+	.stApp h1, .stApp h2, .stApp h3, .stApp p, .stApp label {
+		font-family: 'Segoe UI', sans-serif;
+	}
+	.stButton button, .stLinkButton a {
+		background: #238636;
+		border: 1px solid #2ea043;
+		color: #ffffff;
+		font-weight: 600;
+	}
+	.stButton button:hover, .stLinkButton a:hover {
+		background: #2ea043;
+		border-color: #3fb950;
+		color: #ffffff;
+	}
 	.tank-panel {
-		background: #17232b;
-		border: 1px solid #31434d;
+		background: #161b22;
+		border: 1px solid #30363d;
 		border-radius: 8px;
 		padding: 1rem 1.2rem;
 		margin-bottom: 0.75rem;
 	}
-	.tank-panel h3 { margin: 0 0 .25rem; color: #e8eef2; }
-	.tank-subtitle { color: #9db0ba; font-size: .9rem; }
+	.tank-panel h3 { margin: 0 0 .25rem; color: #e6edf3; }
+	.tank-subtitle { color: #8b949e; font-size: .9rem; }
 	.status-line {
-		border-left: 3px solid #36b3a8;
+		border-left: 3px solid #58a6ff;
 		padding: .55rem .8rem;
-		background: #17232b;
-		color: #dce8ec;
+		background: #161b22;
+		color: #e6edf3;
 	}
 	</style>
 	""",
 	unsafe_allow_html=True,
 )
 
-st.sidebar.title("Prácticas")
-practica = st.sidebar.radio(
-	"Selecciona una práctica",
+st.sidebar.title("Portafolio")
+pagina = st.sidebar.radio(
+	"Navegación",
 	[
-		"Práctica 1: Control de LED",
-		"Práctica 2: Control de Relé",
-		"Práctica 3: Bombas (Simulador)",
+		"🏠 Inicio",
+		"💡 Práctica 1: LED",
+		"⚙️ Práctica 2: Relé",
+		"🌊 Práctica 3: Bombas",
 	],
-	index=2,
+	label_visibility="collapsed",
 )
 
-if practica == "Práctica 1: Control de LED":
-	st.header("Práctica 1: Control de LED")
-	st.write("Simulación del control de un LED realizada en Wokwi.")
-	st.link_button(
-		"Abrir simulación en Wokwi",
-		"https://wokwi.com/projects/476381725083303937",
+if pagina == "🏠 Inicio":
+	st.title("Portafolio Interactivo de Sistemas Embebidos")
+	st.write(
+		"Dashboard desarrollado para visualizar y simular proyectos de electrónica "
+		"y control en tiempo real, sin necesidad de hardware físico."
 	)
-elif practica == "Práctica 2: Control de Relé":
-	st.header("Práctica 2: Control de Relé")
-	st.write("Simulación del control de un relé realizada en Wokwi.")
-	st.link_button(
-		"Abrir simulación en Wokwi",
-		"https://wokwi.com/projects/476381886558822401",
+	with st.container(border=True):
+		st.subheader("GitHub")
+		st.write("Código fuente y proyectos de Carlos Ordóñez.")
+		st.link_button(
+			"Visitar mi GitHub",
+			"https://github.com/CarlosOrdonez-upb",
+			type="primary",
+		)
+elif pagina == "💡 Práctica 1: LED":
+	st.header("💡 Práctica 1: LED")
+	st.caption("Simulación del control de un LED realizada en Wokwi.")
+	components.html(
+		'<iframe src="https://wokwi.com/projects/476381725083303937?embed=1" '
+		'title="Simulación de control de LED en Wokwi" width="100%" height="600" '
+		'style="border: 1px solid #30363d; border-radius: 6px;" allowfullscreen></iframe>',
+		height=600,
+		scrolling=False,
 	)
-elif practica == "Práctica 3: Bombas (Simulador)":
+elif pagina == "⚙️ Práctica 2: Relé":
+	st.header("⚙️ Práctica 2: Relé")
+	st.caption("Simulación del control de un relé realizada en Wokwi.")
+	components.html(
+		'<iframe src="https://wokwi.com/projects/476381886558822401?embed=1" '
+		'title="Simulación de control de relé en Wokwi" width="100%" height="600" '
+		'style="border: 1px solid #30363d; border-radius: 6px;" allowfullscreen></iframe>',
+		height=600,
+		scrolling=False,
+	)
+elif pagina == "🌊 Práctica 3: Bombas":
 	CAPACIDAD_ML = 1000
 	NIVEL_MINIMO_ML = 200
 	NIVEL_MAXIMO_ML = 800
