@@ -44,10 +44,18 @@ practica = st.sidebar.radio(
 
 if practica == "Práctica 1: Control de LED":
 	st.header("Práctica 1: Control de LED")
-	st.info("Esta práctica aún no está disponible.")
+	st.write("Simulación del control de un LED realizada en Wokwi.")
+	st.link_button(
+		"Abrir simulación en Wokwi",
+		"https://wokwi.com/projects/476381725083303937",
+	)
 elif practica == "Práctica 2: Control de Relé":
 	st.header("Práctica 2: Control de Relé")
-	st.info("Esta práctica aún no está disponible.")
+	st.write("Simulación del control de un relé realizada en Wokwi.")
+	st.link_button(
+		"Abrir simulación en Wokwi",
+		"https://wokwi.com/projects/476381886558822401",
+	)
 elif practica == "Práctica 3: Bombas (Simulador)":
 	CAPACIDAD_ML = 1000
 	NIVEL_MINIMO_ML = 200
