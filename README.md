@@ -20,20 +20,24 @@ El objetivo de este portafolio es demostrar la capacidad de integrar hardware (E
 
 ## 📂 Prácticas Destacadas
 
-| Práctica | Descripción | Tecnología | Estado |
+| Proyecto | Descripción | Tecnología | Estado |
 | :--- | :--- | :--- | :---: |
-| **01. Control de LED** | Lógica de botones y GPIOs con simulación en tiempo real. | ESP32 + Wokwi | ✅ Live |
-| **02. Control de Relé** | Etapa de potencia y aislamiento para motores DC. | ESP32 + Relé | ✅ Live |
-| **03. Gemelo Digital** | Simulador de transferencia de líquidos con lógica de normalización y conservación de masa. | Python (Streamlit) | ✅ Live |
+| **Control de LED** | Lógica de botones y GPIOs con simulación en tiempo real. | ESP32 + Wokwi | ✅ Live |
+| **Control de relé** | Etapa de potencia y aislamiento para motores DC. | ESP32 + Relé | ✅ Live |
+| **Simulador de bombas** | Transferencia de líquidos con lógica de normalización y conservación de masa. | Python (Streamlit) | ✅ Live |
+| **Simulador de caja térmica** | Control virtual de temperatura con foco, módulo Peltier, ventiladores y puertas. | Python (Streamlit) | ✅ Live |
 
 ---
 
-##  Destacado Técnico: Práctica 03 (Gemelo Digital)
+## Simulador de bombas (Gemelo Digital)
 
-La práctica más compleja del portafolio es el **Simulador de Bombas**. Originalmente desarrollado en Tkinter para escritorio, fue migrado a una arquitectura web reactiva utilizando `st.session_state` para mantener la persistencia de datos.
+El **Simulador de Bombas** utiliza una arquitectura web reactiva con `st.session_state` para mantener el estado de los depósitos durante la simulación.
 
 **Características clave:**
 - **Lógica de Normalización:** El sistema detecta si los tanques están fuera del rango operativo (20%-80%) y solicita al usuario una corrección antes de permitir la operación automática, previniendo desbordamientos simulados.
 - **Conservación de Masa:** Algoritmo que garantiza que la suma de los volúmenes de los depósitos A y B siempre sea constante (1000ml).
 - **Interfaz Reactiva:** Actualización de barras de progreso y estados en tiempo real sin recargar la página.
 
+## Simulador de caja térmica
+
+La caja térmica recrea en el navegador el comportamiento del programa de escritorio, sin necesitar Qt, un ESP32 ni conexión serial. Permite ajustar la temperatura objetivo y las condiciones ambientales, operar en modo automático o manual, abrir la puerta para simular ventilación y observar los actuadores y las lecturas virtuales.

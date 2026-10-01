@@ -41,6 +41,30 @@ st.markdown(
 		background: #161b22;
 		color: #e6edf3;
 	}
+	.thermal-box {
+		border: 8px solid #8b5a2b;
+		border-radius: 14px;
+		padding: 1.5rem;
+		min-height: 180px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		color: #0d1117;
+		transition: background .4s ease;
+	}
+	.thermal-box h3 { color: #0d1117; margin: 0; }
+	.thermal-components {
+		display: flex;
+		justify-content: space-between;
+		gap: .5rem;
+		flex-wrap: wrap;
+	}
+	.thermal-component {
+		padding: .4rem .65rem;
+		background: rgba(255,255,255,.75);
+		border-radius: 6px;
+		font-weight: 600;
+	}
 	</style>
 	""",
 	unsafe_allow_html=True,
@@ -51,9 +75,10 @@ pagina = st.sidebar.radio(
 	"Navegación",
 	[
 		"🏠 Inicio",
-		"💡 Práctica 1: LED",
-		"⚙️ Práctica 2: Relé",
-		"🌊 Práctica 3: Bombas",
+		"💡 LED",
+		"⚙️ Relé",
+		"🌊 Bombas",
+		"🌡️ Caja térmica",
 	],
 	label_visibility="collapsed",
 )
@@ -72,8 +97,8 @@ if pagina == "🏠 Inicio":
 			"https://github.com/CarlosOrdonez-upb",
 			type="primary",
 		)
-elif pagina == "💡 Práctica 1: LED":
-	st.header("💡 Práctica 1: LED")
+elif pagina == "💡 LED":
+	st.header("💡 Control de LED")
 	st.caption("Simulación del control de un LED realizada en Wokwi.")
 	components.html(
 		'<iframe src="https://wokwi.com/projects/476381725083303937?embed=1" '
@@ -82,8 +107,8 @@ elif pagina == "💡 Práctica 1: LED":
 		height=600,
 		scrolling=False,
 	)
-elif pagina == "⚙️ Práctica 2: Relé":
-	st.header("⚙️ Práctica 2: Relé")
+elif pagina == "⚙️ Relé":
+	st.header("⚙️ Control de relé")
 	st.caption("Simulación del control de un relé realizada en Wokwi.")
 	components.html(
 		'<iframe src="https://wokwi.com/projects/476381886558822401?embed=1" '
@@ -92,7 +117,7 @@ elif pagina == "⚙️ Práctica 2: Relé":
 		height=600,
 		scrolling=False,
 	)
-elif pagina == "🌊 Práctica 3: Bombas":
+elif pagina == "🌊 Bombas":
 	CAPACIDAD_ML = 1000
 	NIVEL_MINIMO_ML = 200
 	NIVEL_MAXIMO_ML = 800
@@ -116,7 +141,7 @@ elif pagina == "🌊 Práctica 3: Bombas":
 		if clave not in st.session_state:
 			st.session_state[clave] = valor
 
-	st.header("Práctica 3: Bombas (Simulador)")
+	st.header("Simulador de bombas")
 	st.caption("Transferencia virtual entre dos depósitos de 1000 ml, sin hardware.")
 
 	@st.fragment(run_every="100ms")
@@ -305,3 +330,164 @@ elif pagina == "🌊 Práctica 3: Bombas":
 		)
 
 	simulador_bombas()
+elif pagina == "🌡️ Caja térmica":
+	valores_iniciales = {
+		"temperatura_caja": 24.0,
+		"humedad_caja": 55.0,
+		"simulacion_caja_activa": False,
+		"puerta_caja_abierta": False,
+		"accion_manual_caja": "Mantener",
+	}
+	for clave, valor in valores_iniciales.items():
+		if clave not in st.session_state:
+			st.session_state[clave] = valor
+
+	st.header("Simulador de caja térmica")
+	st.caption(
+		"Control virtual de temperatura con foco calefactor, módulo Peltier, "
+		"ventiladores y puertas. No requiere ESP32 ni conexión serial."
+	)
+
+	@st.fragment(run_every="500ms")
+	def simulador_caja_termica():
+		columnas_ajustes = st.columns(3)
+		with columnas_ajustes[0]:
+			modo = st.selectbox(
+				"Modo de operación",
+				["Automático", "Manual"],
+				key="modo_caja_termica",
+			)
+			objetivo = st.slider(
+				"Temperatura objetivo (°C)",
+				min_value=20.0,
+				max_value=50.0,
+				value=35.0,
+				step=0.5,
+				key="objetivo_caja_termica",
+			)
+		with columnas_ajustes[1]:
+			temperatura_ambiente = st.slider(
+				"Temperatura ambiente (°C)",
+				min_value=10.0,
+				max_value=40.0,
+				value=22.0,
+				step=0.5,
+				key="ambiente_caja_termica",
+			)
+			humedad_ambiente = st.slider(
+				"Humedad ambiente (%)",
+				min_value=20,
+				max_value=90,
+				value=50,
+				key="humedad_ambiente_caja",
+			)
+		with columnas_ajustes[2]:
+			if st.button(
+				"Detener simulación" if st.session_state.simulacion_caja_activa
+				else "Iniciar simulación",
+				use_container_width=True,
+				type="primary",
+			):
+				st.session_state.simulacion_caja_activa = (
+					not st.session_state.simulacion_caja_activa
+				)
+			if st.button(
+				"Cerrar puerta" if st.session_state.puerta_caja_abierta
+				else "Abrir puerta",
+				use_container_width=True,
+			):
+				st.session_state.puerta_caja_abierta = (
+					not st.session_state.puerta_caja_abierta
+				)
+
+		if modo == "Manual":
+			st.caption("Selecciona una acción para los actuadores:")
+			acciones = st.columns(3)
+			for columna, accion in zip(
+				acciones, ("Calentar", "Enfriar", "Mantener")
+			):
+				if columna.button(accion, use_container_width=True):
+					st.session_state.accion_manual_caja = accion
+
+		temperatura = st.session_state.temperatura_caja
+		humedad = st.session_state.humedad_caja
+		foco_activo = False
+		peltier_activo = False
+		ventiladores_activos = False
+		if st.session_state.simulacion_caja_activa:
+			if st.session_state.puerta_caja_abierta:
+				temperatura += max(
+					-0.15, min(0.15, (temperatura_ambiente - temperatura) * 0.03)
+				)
+				humedad += max(
+					-0.5, min(0.5, (humedad_ambiente - humedad) * 0.03)
+				)
+				ventiladores_activos = True
+				estado = "Ventilando la caja con la puerta abierta."
+			else:
+				accion = (
+					"Automático" if modo == "Automático"
+					else st.session_state.accion_manual_caja
+				)
+				if accion == "Automático":
+					if temperatura < objetivo - 0.3:
+						accion = "Calentar"
+					elif temperatura > objetivo + 0.3:
+						accion = "Enfriar"
+					else:
+						accion = "Mantener"
+
+				if accion == "Calentar":
+					temperatura = min(50.0, temperatura + 0.12)
+					humedad = max(20.0, humedad - 0.015)
+					foco_activo = True
+					ventiladores_activos = True
+					estado = "Calentando hasta alcanzar la temperatura objetivo."
+				elif accion == "Enfriar":
+					temperatura = max(10.0, temperatura - 0.14)
+					humedad = min(90.0, humedad + 0.015)
+					peltier_activo = True
+					ventiladores_activos = True
+					estado = "Enfriando hasta alcanzar la temperatura objetivo."
+				else:
+					estado = "Temperatura estable; actuadores en espera."
+			st.session_state.temperatura_caja = temperatura
+			st.session_state.humedad_caja = humedad
+		else:
+			estado = "Simulación detenida."
+
+		temperatura = st.session_state.temperatura_caja
+		humedad = st.session_state.humedad_caja
+		indicadores = st.columns(3)
+		indicadores[0].metric("Temperatura", f"{temperatura:.1f} °C")
+		indicadores[1].metric("Objetivo", f"{objetivo:.1f} °C")
+		indicadores[2].metric("Humedad", f"{humedad:.0f}%")
+		st.progress(
+			max(0.0, min(1.0, (temperatura - 10.0) / 40.0)),
+			text="Rango del sensor: 10–50 °C",
+		)
+
+		if temperatura < 25:
+			color_caja = "#9bd7f5"
+		elif temperatura < 30:
+			color_caja = "#d3d8d6"
+		else:
+			color_caja = "#f5a39a"
+		puerta = "Abierta" if st.session_state.puerta_caja_abierta else "Cerrada"
+		st.markdown(
+			f'<div class="thermal-box" style="background:{color_caja}">'
+			f'<h3>Cámara térmica · {temperatura:.1f} °C</h3>'
+			'<div class="thermal-components">'
+			f'<span class="thermal-component">Foco: {"Activo" if foco_activo else "Apagado"}</span>'
+			f'<span class="thermal-component">Peltier: {"Activo" if peltier_activo else "Apagado"}</span>'
+			f'<span class="thermal-component">Ventiladores: {"Activos" if ventiladores_activos else "Detenidos"}</span>'
+			f'<span class="thermal-component">Puerta: {puerta}</span>'
+			'</div></div>',
+			unsafe_allow_html=True,
+		)
+		st.markdown(
+			f'<div class="status-line">{estado}</div>',
+			unsafe_allow_html=True,
+		)
+
+	simulador_caja_termica()
