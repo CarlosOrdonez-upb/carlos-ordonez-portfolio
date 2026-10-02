@@ -40,4 +40,8 @@ El **Simulador de Bombas** utiliza una arquitectura web reactiva con `st.session
 
 ## Simulador de caja térmica
 
-La caja térmica recrea en el navegador el comportamiento del programa de escritorio, sin necesitar Qt, un ESP32 ni conexión serial. Permite ajustar la temperatura objetivo y las condiciones ambientales, operar en modo automático o manual, abrir la puerta para simular ventilación y observar los actuadores y las lecturas virtuales.
+La caja térmica recrea en el navegador el comportamiento del programa de escritorio, sin necesitar Qt, un ESP32 ni conexión serial. Permite ajustar la temperatura objetivo y las condiciones ambientales, operar en modo automático o manual, abrir las puertas para simular la extracción de aire y observar los actuadores y las lecturas virtuales. El dibujo SVG anima los ventiladores, las puertas, el flujo de aire y las partículas de calor, copos de nieve o aire extraído; el color interior también transiciona según la temperatura.
+
+## Organización del código
+
+Cada simulación está separada en su propia carpeta dentro de `practicas/` (`led/`, `rele/`, `bombas/` y `caja_termica/`). `streamlit_app.py` conserva la navegación y delega el renderizado de cada proyecto a su módulo.
